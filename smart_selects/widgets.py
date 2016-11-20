@@ -128,6 +128,7 @@ class ChainedSelect(JqueryMediaMixin, Select):
 
             $(document).ready(function() {
                 chainedfk.init(chainfield, url, id, value, empty_label, auto_choose);
+                chainedfk.init(chainfield+'_0', url, id, value, empty_label, auto_choose);
             });
         })(jQuery || django.jQuery);
         </script>
