@@ -24,6 +24,7 @@ else:
     JQUERY_URL = getattr(settings, 'JQUERY_URL', 'https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js')
 
 URL_PREFIX = getattr(settings, "SMART_SELECTS_URL_PREFIX", "")
+SELECTABLE_COMPAT = getattr(settings, "SMART_SELECTS_SELECTABLE_COMPAT", False)
 
 
 class JqueryMediaMixin(object):
@@ -249,23 +250,31 @@ class ChainedSelectMultiple(JqueryMediaMixin, SelectMultiple):
         <script type="text/javascript">
         (function($) {
 
-        var chainfield = "#id_%(chainfield)s";
+        var chainfield_v = "#id_%(chainfield_v)s"; // chainfield to watch
+        var chainfield_w = "#id_%(chainfield_w)s"; // chainfield with value
         var url = "%(url)s";
         var id = "#%(id)s";
         var value = %(value)s;
         var auto_choose = %(auto_choose)s;
 
         $(document).ready(function() {
-            chainedm2m.init(chainfield, url, id, value, auto_choose);
+            chainedm2m.init(chainfield_w, chainfield_v, url, id, value, auto_choose);
         });
         })(jQuery || django.jQuery);
         </script>
 
         """
-        js = js % {"chainfield": chain_field,
+        if SELECTABLE_COMPAT:
+            chain_field_w = chain_field + '_0'
+            chain_field_v = chain_field + '_1'
+        else:
+            chain_field_w = chain_field_v = chain_field
+
+        js = js % {"chainfield_w": chain_field_w,
+                   "chainfield_v": chain_field_v,
                    "url": url,
                    "id": attrs['id'],
-                   'value': json.dumps(value),
+                   'value': json.dumps(value) if value is not None else '""',
                    'auto_choose': auto_choose}
 
         # since we cannot deduce the value of the chained_field
@@ -282,4 +291,3 @@ class ChainedSelectMultiple(JqueryMediaMixin, SelectMultiple):
         output += js
 
         return mark_safe(output)
-
