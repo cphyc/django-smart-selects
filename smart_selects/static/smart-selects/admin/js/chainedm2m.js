@@ -75,7 +75,7 @@
             },
 
             init: function(chainfield_watch, chainfield_val, url, id, value, auto_choose) {
-		var initial_parent = $(chainfield_watch).val();
+                var initial_parent = $(chainfield_watch).val();
                 var initial_value = value;
 
                 if(!$(chainfield_val).hasClass("chained")){
@@ -84,17 +84,17 @@
                 }
                 var fill_field = this.fill_field;
                 $(chainfield_watch).change(function(){
-		    setTimeout(function(){
-			var localID = id;
-			if (localID.indexOf("__prefix__") > -1) {
+                    setTimeout(function(){
+                        var localID = id;
+                        if (localID.indexOf("__prefix__") > -1) {
                             var prefix = $(this).attr("id").match(/\d+/)[0];
                             localID = localID.replace("__prefix__", prefix);
-			}
+                        }
 
-			var start_value = $(localID).val();
-			var val = $(chainfield_val).val();
-			fill_field(val, initial_value, localID, url, initial_parent, auto_choose);
-		    }, 100);
+                        var start_value = $(localID).val();
+                        var val = $(chainfield_val).val();
+                        fill_field(val, initial_value, localID, url, initial_parent, auto_choose);
+                    }, 100);
                 });
 
                 // allait en bas, hors du documentready
